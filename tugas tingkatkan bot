@@ -1,0 +1,49 @@
+import discord
+import random
+
+intents = discord.Intents.default()
+intents.message_content = True
+client = discord.Client(intents=intents)
+
+user_points = {}
+
+def double_letter(s):
+    return ''.join([letter * 2 for letter in s])
+
+def secret_function(a, b):
+    return str(a) + str(b)
+
+@client.event
+async def on_ready():
+    print(f'We have logged in as {client.user}')
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.content.startswith('$coinflip'):
+        result = random.choice(['Heads', 'Tails'])
+        await message.channel.send(f"Coin flipped: {result}")
+
+    if message.content.startswith('$randomemoji'):
+        random_emoji = random.choice(['😊', '🎉', '🤖', '🌟', '🚀'])
+        await message.channel.send(f"Random Emoji: {random_emoji}")
+
+    if message.content.startswith('$earnpoints'):
+        if message.author.id not in user_points:
+            user_points[message.author.id] = 0
+        user_points[message.author.id] += 10
+        await message.channel.send(f"You earned 10 points! Total points: {user_points[message.author.id]}")
+
+    if message.content.startswith('$meme'):
+        # Code to fetch a random meme from a meme source
+        random_meme_url = "https://example.com/random_meme"
+        await message.channel.send(f"Random Meme: {random_meme_url}")
+
+# Replace "YOUR_BOT_TOKEN_HERE" with your actual bot token
+client.run("YOUR_BOT_TOKEN_HERE")
+
+print(double_letter("hello"))
+print(secret_function(1, 2))
+print(secret_function("Hello, ", "world!"))

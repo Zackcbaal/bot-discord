@@ -1,0 +1,30 @@
+# Dictionary untuk menyimpan meme berdasarkan topik dan kelangkaan
+meme_storage = {
+    'animals': {
+        'common': ['meme1.jpg', 'meme2.jpg', 'meme3.jpg'],
+        'rare': ['rare_meme1.jpg', 'rare_meme2.jpg']
+    },
+    # Tambahkan topik lain jika diperlukan
+}
+
+# Membuat command untuk mengirimkan meme berdasarkan topik dan kelangkaan
+@bot.command()
+async def send_meme(ctx, topic='animals', rarity='common'):
+    """Sends a meme based on the specified topic and rarity."""
+    if topic in meme_storage and rarity in meme_storage[topic]:
+        memes = meme_storage[topic][rarity]
+        if memes:
+            meme_name = random.choice(memes)
+            meme_path = os.path.join('images', topic, meme_name)
+
+            with open(meme_path, 'rb') as f:
+                meme_file = discord.File(f)
+
+            await ctx.send(f'Meme from {topic.capitalize()} ({rarity}):', file=meme_file)
+        else:
+            await ctx.send(f'No {rarity} memes found for {topic}.')
+    else:
+        await ctx.send('Invalid topic or rarity.')
+
+# Contoh penggunaan: $send_meme animals rare
+# Ini akan mengirimkan meme langka tentang hewan jika ada yang tersedia

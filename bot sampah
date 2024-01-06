@@ -1,0 +1,29 @@
+import discord
+from discord.ext import commands
+
+# Membuat instance bot
+bot = commands.Bot(command_prefix='!')
+
+# Event saat bot siap
+@bot.event
+async def on_ready():
+    print(f'Bot telah siap. Username: {bot.user.name}, ID: {bot.user.id}')
+
+# Command untuk memberikan saran tempat sampah
+@bot.command()
+async def saran_tempat_sampah(ctx, jenis_limbah):
+    if jenis_limbah == 'organik':
+        await ctx.send('Tempat sampah organik digunakan untuk membuang sisa makanan dan bahan organik lainnya.')
+    elif jenis_limbah == 'plastik':
+        await ctx.send('Tempat sampah plastik digunakan untuk membuang botol plastik, kemasan plastik, dan barang-barang plastik lainnya.')
+    elif jenis_limbah == 'kertas':
+        await ctx.send('Tempat sampah kertas digunakan untuk membuang kertas bekas, kardus, dan produk kertas lainnya.')
+    elif jenis_limbah == 'kaca':
+        await ctx.send('Tempat sampah kaca digunakan untuk membuang botol kaca, gelas kaca, dan barang-barang kaca lainnya.')
+    elif jenis_limbah == 'logam':
+        await ctx.send('Tempat sampah logam digunakan untuk membuang kaleng, tutup botol, dan barang-barang logam lainnya.')
+    else:
+        await ctx.send('Maaf, jenis limbah tidak dikenali.')
+
+# Menjalankan bot
+bot.run('YOUR_BOT_TOKEN')

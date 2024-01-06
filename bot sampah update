@@ -1,0 +1,106 @@
+import discord
+from discord.ext import commands
+import random
+import asyncio
+
+# Membuat instance bot
+bot = commands.Bot(command_prefix='!')
+
+# Dictionary untuk menyimpan poin pengguna (id_pengguna: poin)
+poin_pengguna = {}
+
+# Event saat bot siap
+@bot.event
+async def on_ready():
+    print(f'Bot telah siap. Username: {bot.user.name}, ID: {bot.user.id}')
+
+# Command untuk memberikan saran tempat sampah
+@bot.command()
+async def saran_tempat_sampah(ctx, jenis_limbah):
+    if jenis_limbah == 'organik':
+        await ctx.send('Tempat sampah organik digunakan untuk membuang sisa makanan dan bahan organik lainnya.')
+    elif jenis_limbah == 'plastik':
+        await ctx.send('Tempat sampah plastik digunakan untuk membuang botol plastik, kemasan plastik, dan barang-barang plastik lainnya.')
+    elif jenis_limbah == 'kertas':
+        await ctx.send('Tempat sampah kertas digunakan untuk membuang kertas bekas, kardus, dan produk kertas lainnya.')
+    elif jenis_limbah == 'kaca':
+        await ctx.send('Tempat sampah kaca digunakan untuk membuang botol kaca, gelas kaca, dan barang-barang kaca lainnya.')
+    elif jenis_limbah == 'logam':
+        await ctx.send('Tempat sampah logam digunakan untuk membuang kaleng, tutup botol, dan barang-barang logam lainnya.')
+    else:
+        await ctx.send('Maaf, jenis limbah tidak dikenali.')
+
+# Command kuis lingkungan
+@bot.command()
+async def kuis_lingkungan(ctx):
+    pertanyaan_list = [
+        {'pertanyaan': 'Apa manfaat utama dari pengurangan plastik?', 'jawaban': 'Mengurangi polusi lingkungan dan kerusakan ekosistem.'},
+        {'pertanyaan': 'Apa yang dapat kita lakukan untuk mengurangi jejak karbon kita?', 'jawaban': 'Mengurangi penggunaan energi fosil dan mendukung energi terbarukan.'},
+        {'pertanyaan': 'Apa yang dimaksud dengan daur ulang?', 'jawaban': 'Proses mengubah barang bekas menjadi barang baru untuk mengurangi sampah.'},
+        {'pertanyaan': 'Apa itu "zero waste"?', 'jawaban': 'Gaya hidup yang bertujuan untuk menghasilkan se sedikit mungkin sampah.'},
+        {'pertanyaan': 'Apa dampak negatif dari deforestasi?', 'jawaban': 'Hilangnya keanekaragaman hayati, perubahan iklim, dan kerugian habitat.'},
+        {'pertanyaan': 'Apa yang dimaksud dengan "footprint" ekologis?', 'jawaban': 'Total jejak lingkungan yang dihasilkan oleh individu, produk, atau organisasi.'},
+        {'pertanyaan': 'Bagaimana cara mengurangi konsumsi air?', 'jawaban': 'Mematikan keran saat tidak digunakan, memperbaiki kebocoran, dan menggunakan teknologi hemat air.'},
+        {'pertanyaan': 'Apa yang bisa kita lakukan untuk melindungi satwa liar?', 'jawaban': 'Melestarikan habitat alam, mendukung upaya konservasi, dan mengurangi polusi.'},
+        {'pertanyaan': 'Apa manfaat dari menggunakan energi terbarukan?', 'jawaban': 'Mengurangi emisi gas rumah kaca dan mengurangi ketergantungan pada bahan bakar fosil.'},
+        {'pertanyaan': 'Bagaimana cara mengurangi penggunaan plastik dalam kehidupan sehari-hari?', 'jawaban': 'Menggunakan kantong belanja kain, botol air tahan ulang, dan menghindari produk plastik sekali pakai.'},
+        {'pertanyaan': 'Apa peran hutan dalam menjaga keseimbangan ekosistem?', 'jawaban': 'Hutan menyediakan habitat bagi berbagai spesies, menyimpan karbon, dan memengaruhi siklus air.'},
+        {'pertanyaan': 'Apa yang dimaksud dengan efek rumah kaca?', 'jawaban': 'Penyaringan radiasi panas oleh gas-gas di atmosfer, menyebabkan pemanasan global.'},
+        {'pertanyaan': 'Apa yang bisa kita lakukan untuk mendukung pertanian berkelanjutan?', 'jawaban': 'Membeli produk lokal, mendukung petani kecil, dan memilih produk organik.'},
+        {'pertanyaan': 'Apa dampak negatif dari polusi udara?', 'jawaban': 'Masalah pernapasan, kerusakan lingkungan, dan masalah kesehatan kronis.'},
+        {'pertanyaan': 'Apa yang dimaksud dengan "fast fashion"?', 'jawaban': 'Industri mode yang menghasilkan barang dengan cepat dan murah, mendukung siklus konsumsi berlebihan.'},
+    ]
+
+    await ctx.send('Selamat datang di Kuis Lingkungan! Jawablah pertanyaan dengan benar untuk mendapatkan poin.')
+
+    for pertanyaan in pertanyaan_list:
+        await asyncio.sleep(2)  # Delay sebelum menampilkan pertanyaan berikutnya
+        await ctx.send(f'**{pertanyaan["pertanyaan"]}**')
+
+        try:
+            jawaban = await bot.wait_for('message', timeout=30, check=lambda message: message.author == ctx.author)
+        except asyncio.TimeoutError:
+            await ctx.send('Waktu habis! Kuis diakhiri.')
+            return
+
+        if jawaban.content.lower() == pertanyaan['jawaban'].lower():
+            await ctx.send('Jawaban benar! 🌍👍')
+            # Tambahkan logika untuk memberikan poin atau penghargaan jika diinginkan
+        else:
+            await ctx.send(f'Jawaban salah. Jawaban yang benar adalah: {pertanyaan["jawaban"]}')
+
+    await ctx.send('Kuis selesai. Terima kasih atas partisipasinya!')
+
+# Command untuk Daur Ulang Challenge
+@bot.command()
+async def daur_ulang_challenge(ctx):
+    await ctx.send("Selamat datang di Daur Ulang Challenge! Unggah foto kreatifmu yang menunjukkan upaya daur ulang sehari-hari.")
+    await ctx.send("Kamu akan mendapatkan poin berdasarkan kreativitas dan keberlanjutan usaha daur ulangmu.")
+
+    try:
+        pesan = await bot.wait_for('message', timeout=120, check=lambda message: message.author == ctx.author and message.attachments)
+        # Menunggu pengguna mengunggah foto dengan batas waktu 120 detik
+
+        # Logika untuk menilai kreativitas foto dan memberikan poin
+        poin_didapat = random.randint(1, 10)
+        await ctx.send(f'Terima kasih! Kamu mendapatkan {poin_didapat} poin untuk upaya daur ulangmu.')
+
+        # Menyimpan poin ke dalam variabel pengguna
+        id_pengguna = str(ctx.author.id)
+        if id_pengguna in poin_pengguna:
+            poin_pengguna[id_pengguna] += poin_didapat
+        else:
+            poin_pengguna[id_pengguna] = poin_didapat
+
+    except asyncio.TimeoutError:
+        await ctx.send('Waktu habis! Daur Ulang Challenge diakhiri.')
+
+# Command untuk melihat poin pengguna
+@bot.command()
+async def lihat_poin(ctx):
+    id_pengguna = str(ctx.author.id)
+    poin = poin_pengguna.get(id_pengguna, 0)
+    await ctx.send(f'Jumlah poinmu saat ini: {poin}')
+
+# Menjalankan bot
+bot.run('YOUR_BOT_TOKEN')
